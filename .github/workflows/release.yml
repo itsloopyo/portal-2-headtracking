@@ -1,0 +1,216 @@
+name: Release
+run-name: "Release ${{ github.ref_name }}"
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and Release
+    runs-on: windows-latest
+
+    steps:
+      - name: Require release announcement prerequisites
+        shell: pwsh
+        env:
+          DISCORD_RELEASE_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+          LOPARI_APP_ACTIONS_TOKEN: ${{ secrets.LOPARI_APP_ACTIONS_TOKEN }}
+          # Workflow context reaches the shell through env, never through
+          # ${{ }} spliced into the script text - that splice is evaluated
+          # before the shell sees the line, so a ref or repo name carrying
+          # shell syntax would run as code.
+          REPO: ${{ github.repository }}
+        run: |
+          if (-not $env:DISCORD_RELEASE_WEBHOOK) {
+            Write-Host "::error::DISCORD_RELEASE_WEBHOOK secret is not set - every release must be announced to Discord, so this run is refused before the release is created. Set it with 'gh secret set DISCORD_RELEASE_WEBHOOK --repo $env:REPO' and re-run."
+            exit 1
+          }
+          $bust = "cb$([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())"
+          $mods = (Invoke-RestMethod "https://lopari.app/mods.json?$bust").mods
+          $entry = @($mods) | Where-Object { $_.repo -eq $env:REPO }
+          if ($entry -and -not $env:LOPARI_APP_ACTIONS_TOKEN) {
+            Write-Host "::error::$env:REPO is in the Lopari catalog but LOPARI_APP_ACTIONS_TOKEN is not set - the catalog pin can't be synced before the announcement, so the Run in Lopari link would serve the previous release. Set the fine-grained PAT (Actions:write on itsloopyo/lopari.app only) and re-run."
+            exit 1
+          }
+          Write-Host "Release announcement prerequisites present."
+
+      - name: Checkout code
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Setup Visual Studio environment
+        uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3.0.0
+
+      - name: Extract version from tag
+        id: ver
+        shell: pwsh
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          $tag = $env:TAG
+          if ($tag -notmatch '^v(\d+\.\d+\.\d+)$') {
+            Write-Host "::error::Tag '$tag' is not in vX.Y.Z form"; exit 1
+          }
+          $version = $Matches[1]
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "Release version: $version" -ForegroundColor Green
+
+      - name: Validate version matches src/version.h
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          $match = Select-String -Path "src/version.h" -Pattern 'HEADTRACKING_VERSION_STRING\s+"([^"]+)"'
+          if (-not $match) { Write-Host "::error::Could not read HEADTRACKING_VERSION_STRING from src/version.h"; exit 1 }
+          $source = $match.Matches[0].Groups[1].Value
+          if ($source -ne $version) {
+            Write-Host "::error::Tag version ($version) does not match src/version.h ($source)"; exit 1
+          }
+          Write-Host "Version match: $version" -ForegroundColor Green
+
+          # release.ps1 lands the changelog entry alongside the version bump, so
+          # a missing entry means the tag was pushed without going through it.
+          $changelog = Get-Content "CHANGELOG.md" -Raw
+          if ($changelog -notmatch "\[$version\]") {
+            Write-Host "::error::CHANGELOG.md has no entry for $version"; exit 1
+          }
+          Write-Host "CHANGELOG.md has entry for $version" -ForegroundColor Green
+
+      # run-install: false - this workspace declares no conda dependencies
+      # (pixi is a task runner here; MSVC and CMake come from the runner image).
+      # The action's post-install `pixi list` errors on an empty environment in
+      # pixi 0.70+. `pixi run package` resolves the env lazily anyway.
+      - name: Setup pixi
+        uses: prefix-dev/setup-pixi@5185adfbffb4bd703da3010310260805d89ebb11 # v0.9.6
+        with:
+          run-install: false
+
+      # Same command as build.yml and developers run - no build logic in YAML.
+      - name: Build and package
+        shell: pwsh
+        run: |
+          pixi run package
+          if ($LASTEXITCODE -ne 0) { Write-Host "::error::pixi run package failed"; exit 1 }
+
+      - name: Validate installer manifest
+        shell: pwsh
+        run: |
+          $zip = Get-ChildItem release/*-installer.zip | Select-Object -First 1
+          node cameraunlock-core/scripts/validate-manifest.mjs $zip.FullName
+
+      - name: Generate release notes
+        shell: pwsh
+        run: |
+          powershell -ExecutionPolicy Bypass -File cameraunlock-core/scripts/generate-release-notes.ps1 `
+            -Version "${{ steps.ver.outputs.version }}" `
+            -ProjectName "Portal 2 Head Tracking" `
+            -ArtifactPaths @('src/', 'cameraunlock-core/', 'scripts/install.cmd', 'scripts/uninstall.cmd')
+          if ($LASTEXITCODE -ne 0) { Write-Host "::error::Release notes generation failed"; exit 1 }
+
+      - name: Find release ZIPs
+        id: zips
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          $installer = "release/Portal2HeadTracking-v$version-installer.zip"
+          $nexus = "release/Portal2HeadTracking-v$version-nexus.zip"
+          if (-not (Test-Path $installer)) { Write-Host "::error::Missing $installer"; exit 1 }
+          if (-not (Test-Path $nexus)) { Write-Host "::error::Missing $nexus"; exit 1 }
+          "installer=$installer" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "nexus=$nexus" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "Found installer and nexus ZIPs" -ForegroundColor Green
+
+      - name: Create GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$env:TAG" `
+            --title "Portal 2 Head Tracking $env:TAG" `
+            --notes-file release-notes.txt `
+            "${{ steps.zips.outputs.installer }}" `
+            "${{ steps.zips.outputs.nexus }}"
+          if ($LASTEXITCODE -ne 0) { Write-Host "::error::gh release create failed"; exit 1 }
+
+      - name: Sync Lopari catalog pin
+        shell: pwsh
+        env:
+          LOPARI_APP_ACTIONS_TOKEN: ${{ secrets.LOPARI_APP_ACTIONS_TOKEN }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          $repo = $env:REPO
+          $version = $env:TAG -replace '^v', ''
+          function Get-PinnedVersion {
+            $bust = "cb$([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())"
+            $mods = (Invoke-RestMethod "https://lopari.app/mods.json?$bust").mods
+            $entry = @($mods) | Where-Object { $_.repo -eq $repo }
+            if (-not $entry) { return $null }
+            return @{ inCatalog = $true; pinned = $entry.release.pinned.version }
+          }
+          $state = Get-PinnedVersion
+          if (-not $state) {
+            Write-Host "::notice::$repo has no Lopari catalog entry - the announce link will use the /run/ page's GitHub fallback."
+            exit 0
+          }
+          if ($state.pinned -eq $version) {
+            Write-Host "Catalog already pins $version."
+            exit 0
+          }
+          Invoke-RestMethod -Method Post `
+            -Uri 'https://api.github.com/repos/itsloopyo/lopari.app/actions/workflows/update-pins.yml/dispatches' `
+            -Headers @{ Authorization = "Bearer $env:LOPARI_APP_ACTIONS_TOKEN"; Accept = 'application/vnd.github+json' } `
+            -ContentType 'application/json' -Body '{"ref":"main"}'
+          Write-Host "Requested lopari.app catalog re-pin; waiting for $version to go live..."
+          $deadline = [DateTime]::UtcNow.AddMinutes(10)
+          while ([DateTime]::UtcNow -lt $deadline) {
+            Start-Sleep -Seconds 15
+            try {
+              $state = Get-PinnedVersion
+            } catch {
+              # A transient fetch failure is part of what the poll absorbs;
+              # a persistent one runs into the deadline below.
+              continue
+            }
+            if ($state.pinned -eq $version) {
+              Write-Host "Catalog pin is live: $version."
+              exit 0
+            }
+            Write-Host "  still pinned at $($state.pinned)..."
+          }
+          Write-Host "::error::Timed out waiting for lopari.app to pin $version (still $($state.pinned)). Check https://github.com/itsloopyo/lopari.app/actions, then re-run this job - the release exists; only the pin sync and announcement are pending."
+          exit 1
+
+      - name: Announce release to Discord
+        shell: pwsh
+        env:
+          DISCORD_RELEASE_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if (-not $env:DISCORD_RELEASE_WEBHOOK) {
+            Write-Host "::error::DISCORD_RELEASE_WEBHOOK secret is not set - the release was created but not announced. Set it with 'gh secret set DISCORD_RELEASE_WEBHOOK --repo $env:REPO' and re-run this job."
+            exit 1
+          }
+          $tag  = $env:TAG
+          $repo = $env:REPO
+          $name = (Get-Culture).TextInfo.ToTitleCase(((($repo -split '/')[-1]) -replace '-head-?tracking$','' -replace '-',' '))
+          $url  = "https://github.com/$repo/releases/tag/$tag"
+          $payload = @{
+            username = 'Mod Releases'
+            embeds   = @(@{
+              title       = "$name Head Tracking $tag"
+              url         = $url
+              description = "A new release of **$name Head Tracking** is live.`n`n**[Download the $tag release]($url)**`n**[Run in Lopari](https://lopari.app/run/?repo=$repo)**"
+              color       = 5814783
+            })
+          } | ConvertTo-Json -Depth 5
+          Invoke-RestMethod -Uri $env:DISCORD_RELEASE_WEBHOOK -Method Post -ContentType 'application/json' -Body $payload
+          Write-Host "Announced $tag to Discord."
