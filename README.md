@@ -3,32 +3,14 @@
 ![Mod GIF](https://raw.githubusercontent.com/itsloopyo/portal-2-headtracking/main/assets/readme-clip.gif)
 
 Head tracking for Portal 2 that decouples where you look from where you aim:
-your head moves the camera, the mouse still points the portal gun, and no VR
-headset is involved.
-
-> [!CAUTION]
-> ## Early build - reticle compensation not yet implemented
->
-> Decoupled look/aim and 3DOF + 6DOF camera tracking work. The game's
-> aim (mouse) is untouched, so portals fly where the mouse points, but
-> the crosshair is still drawn at screen centre, so on a head turn the
-> reticle no longer sits exactly where a portal will land. Game-state
-> gating (suppressing tracking in menus and the console) is also not in
-> yet.
-
-> [!NOTE]
-> Portal 2 pins the camera hook to a specific `client.dll` build. On a
-> build this release does not know about, the mod stays completely dormant
-> and the game runs vanilla, so it never engages against a stale address.
-> If head tracking stops after a Portal 2 update, that is what happened;
-> check the releases page for an update.
+your head moves the camera, the mouse still points the portal gun, no VR
+headset is required.
 
 ## Features
 
 - **Decoupled look and aim** - head tracking moves the camera; aim stays on your mouse or controller
 - **6DOF positional tracking** - lean and peek with head position
 - **Split-screen co-op tracking** - each player gets their own tracker feeding their own viewport
-- **Field of view control** - any FOV you like, past the 75 to 90 the game's own `fov_desired` allows, with no `sv_cheats` and nothing sent to the server. The portal gun's own FOV is adjustable too, which Portal 2 otherwise gives you no way to change
 
 ## Requirements
 
