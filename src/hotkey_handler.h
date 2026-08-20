@@ -6,13 +6,12 @@ namespace headtracking {
 
 class Plugin;
 
-// Owns the polling thread that drives the mod's four actions from the
+// Owns the polling thread that drives the mod's three actions from the
 // keyboard: the nav-cluster keys the config binds, plus the fixed Ctrl+Shift
 // chord alternatives in hotkeys.h.
 class HotkeyHandler {
 public:
-    void Start(Plugin& plugin, int recenter_vk, int toggle_vk, int yaw_mode_vk,
-               int mode_cycle_vk);
+    void Start(Plugin& plugin, int toggle_vk, int yaw_mode_vk, int mode_cycle_vk);
 
 private:
     // ~60Hz. Fast enough that a tap is never missed, slow enough that the

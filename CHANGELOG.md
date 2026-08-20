@@ -18,8 +18,8 @@ All notable changes to Portal2HeadTracking will be documented in this file.
 - Added horizon-locked (world-space) yaw by default and a camera-local yaw mode
   on Page Down, composing the head rotation about the camera's own axes.
 - Added configurable sensitivity, smoothing, deadzone, and inversion per axis,
-  plus recenter, tracking toggle, and 6DOF/rotation/position mode cycling on
-  the nav-cluster keys with Ctrl+Shift chord alternatives.
+  plus tracking toggle and 6DOF/rotation/position mode cycling on the
+  nav-cluster keys with Ctrl+Shift chord alternatives.
 - Added build profiles for Steam `client.dll` 2025-01-17 and 2026-06-26
   (buildid 23934121). Profiles are append-only, so one release supports every
   build it has ever known; an unrecognised build leaves the mod fully dormant
@@ -46,6 +46,22 @@ All notable changes to Portal2HeadTracking will be documented in this file.
   FOVs, so a bug report carries the aspect ratio the view was rendered at.
 
 ### Changed
+- Removed the in-game recentre control. The tracker app owns the centre now:
+  centre with your tracker's own control (OpenTrack's Center bind, the CENTER
+  button in a phone app, SteamVR's reset) and the mod applies the pose it
+  receives as absolute. Keeping a second centre inside the mod meant the two
+  could drift apart, and switching trackers meant recentring on both sides. The
+  `Home` / `Ctrl+Shift+T` hotkey and the `[Hotkeys] Recenter` INI key are gone.
+  In split-screen each player already centred from their own tracker app, so
+  that path is unchanged.
+- `[Debug] LogToFile` now defaults to on. Off, `Portal2HeadTracking.log` held a
+  single loader line, so every "no head tracking" report cost a round trip
+  asking the user to enable logging and play again. `LogToFile=0` is now read
+  before the log is opened, so it creates neither `Portal2HeadTracking.log` nor
+  `Portal2HeadTracking.prev.log` rather than leaving a truncated pair behind.
+- The log now keeps one previous generation as `Portal2HeadTracking.prev.log`.
+  It is still truncated per launch, so a crash no longer erases the session
+  worth reading when the user relaunches.
 - Split smoothing into two keys, `[Smoothing] LocalSmoothing` (default 0.0) and
   `[Smoothing] RemoteSmoothing` (default 0.15), selected per connection from
   the tracker's source address. Both cover rotation and position.

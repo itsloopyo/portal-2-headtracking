@@ -34,4 +34,4 @@ $result = Invoke-DevDeployASILoader `
 
 Write-Host ""
 Write-Host "Deployed Portal2HeadTracking.asi to: $($result.ExeDir)" -ForegroundColor Green
-Write-Host "Controls: Home=recenter, End=toggle tracking, PgUp=cycle 6DOF/rotation/position, PgDn=toggle yaw mode." -ForegroundColor Gray
+Write-Host "Controls: End=toggle tracking, PgUp=cycle 6DOF/rotation/position, PgDn=toggle yaw mode." -ForegroundColor Gray

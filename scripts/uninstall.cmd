@@ -51,7 +51,7 @@ set "ASI_LOADER_NAME=winmm.dll"
 set "ASI_SUBDIR=bin"
 :: Files the mod itself creates next to portal2.exe at the game root. Removed
 :: so uninstall leaves the game vanilla.
-set "ROOT_EXTRAS=HeadTracking.ini Portal2HeadTracking.log"
+set "ROOT_EXTRAS=HeadTracking.ini Portal2HeadTracking.log Portal2HeadTracking.prev.log"
 :: UE4SS REQUIRED: path under GAME_PATH holding the shipping exe. MUST match
 :: install.cmd's UE4_BINARIES_RELDIR. Mods live in its Mods\ subfolder.
 set "UE4_BINARIES_RELDIR="

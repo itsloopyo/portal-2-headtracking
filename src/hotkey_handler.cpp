@@ -7,15 +7,11 @@
 
 namespace headtracking {
 
-void HotkeyHandler::Start(Plugin& plugin, int recenter_vk, int toggle_vk, int yaw_mode_vk,
+void HotkeyHandler::Start(Plugin& plugin, int toggle_vk, int yaw_mode_vk,
                           int mode_cycle_vk) {
     using cameraunlock::input::ChordGuarded;
     using cameraunlock::input::NavGuarded;
 
-    const auto recenter = [&plugin]() {
-        plugin.Recenter();
-        HT_LOG("[hotkey] recenter");
-    };
     const auto toggle = [&plugin]() {
         plugin.ToggleEnabled();
         HT_LOG("[hotkey] toggle -> %s", plugin.IsEnabled() ? "on" : "off");
@@ -32,12 +28,10 @@ void HotkeyHandler::Start(Plugin& plugin, int recenter_vk, int toggle_vk, int ya
 
     // Nav-cluster bindings are suppressed while Ctrl+Shift is held so the chord
     // path is the sole trigger and a remapped nav key cannot fire twice.
-    m_poller.SetRecenterKey(recenter_vk, NavGuarded(recenter));
     m_poller.SetToggleKey(toggle_vk, NavGuarded(toggle));
     m_poller.AddHotkey(yaw_mode_vk, NavGuarded(yawMode));
     m_poller.AddHotkey(mode_cycle_vk, NavGuarded(modeCycle));
 
-    m_poller.AddHotkey(hotkeys::kVkT, ChordGuarded(recenter));
     m_poller.AddHotkey(hotkeys::kVkY, ChordGuarded(toggle));
     m_poller.AddHotkey(hotkeys::kVkH, ChordGuarded(yawMode));
     m_poller.AddHotkey(hotkeys::kVkG, ChordGuarded(modeCycle));

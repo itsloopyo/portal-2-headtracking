@@ -32,7 +32,12 @@ constexpr float kDefaultPosWorldScale  = 39.37f;
 
 constexpr bool  kDefaultWorldSpaceYaw = true;
 constexpr float kDefaultFovOverride   = 0.0f;
-constexpr bool  kDefaultLogToFile     = false;
+// On by default. Off, the log holds a single loader line and a "no head
+// tracking" report cannot be answered without first asking the user to turn
+// this on and play again. The log is truncated per launch and its one
+// steady-state line is throttled to a frame in two thousand, so leaving it on
+// costs well under 100 KB an hour.
+constexpr bool  kDefaultLogToFile     = true;
 
 // An override outside this band is refused: the renderer builds a projection
 // from tan(fov/2), so a value at or past 180 has none at all and one near it
@@ -85,7 +90,6 @@ struct Config {
     // 39.37 is 1:1 with real-world head movement. Primary lean tuning knob.
     float pos_world_scale  = kDefaultPosWorldScale;
 
-    int recenter_vk   = hotkeys::kVkHome;
     int toggle_vk     = hotkeys::kVkEnd;
     int yaw_mode_vk   = hotkeys::kVkPageDown;
     // Page Up: cycles 6DOF -> rotation -> position.
@@ -112,9 +116,13 @@ struct Config {
     // units, so 40-45 shrinks it noticeably. Same units, same 0 = leave alone.
     float fov_viewmodel_override = kDefaultFovOverride;
 
-    bool log_to_file = kDefaultLogToFile;
-
     static std::string IniPath();  // <game folder>\HeadTracking.ini
+    // Reads [Debug] LogToFile on its own, before the rest of the config: the
+    // log has to be open for the bootstrap lines that precede a full load, and
+    // opening it is exactly what LogToFile=0 asks us not to do. Returns the
+    // default when the ini does not exist yet (it is written later, with the
+    // default in it).
+    static bool FileLoggingRequested();
     static Config LoadOrCreateDefault();
     static void WriteDefault(const std::string& path);
 };

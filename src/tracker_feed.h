@@ -15,11 +15,10 @@ namespace headtracking {
 // needs an independent receiver, pipeline and frame clock: sharing one would
 // halve every dt and blend the two players' poses into one view.
 //
-// The KEYBOARD hotkeys are still shared - there is one keyboard, so recenter,
-// toggle and mode cycle apply to both players. Per-player recentering comes
-// from each player's own tracker app (the OpenTrack packet trailer's recenter
-// signal is consumed per feed), which is the path that matters in co-op since
-// player 2 is on their own phone.
+// The KEYBOARD hotkeys are still shared - there is one keyboard, so toggle and
+// mode cycle apply to both players. Each player centres in their own tracker
+// app, which is the path that matters in co-op since player 2 is on their own
+// phone.
 //
 // Update() runs on the render thread; the getters are read from the same
 // thread today but the cache is atomic so a future reader elsewhere sees a
@@ -39,7 +38,6 @@ public:
     bool GetPositionOffset(float& x, float& y, float& z) const;
 
     void SetEnabled(bool enabled);
-    void Recenter();
     void CycleMode();
     const char* ModeName() const;
 
@@ -70,6 +68,9 @@ private:
     float m_localSmoothing = kDefaultLocalSmoothing;
     float m_remoteSmoothing = kDefaultRemoteSmoothing;
     bool m_isRemoteConnection = false;
+    // Tri-state: false/false is indistinguishable from a local tracker, so a
+    // plain equality check never reports the (common) local case at all.
+    bool m_remoteConnectionKnown = false;
 
     std::atomic<float> m_cachedYaw{0.0f};
     std::atomic<float> m_cachedPitch{0.0f};

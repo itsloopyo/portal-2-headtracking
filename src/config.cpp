@@ -182,8 +182,6 @@ void LoadPosition(const Reader& r, Config& c) {
 
 void LoadHotkeys(const Reader& r, Config& c) {
     using namespace hotkeys;
-    c.recenter_vk =
-        ValidHotkeyOr(r.ReadHex("Hotkeys", "Recenter", kVkHome), kVkHome, "Recenter");
     c.toggle_vk =
         ValidHotkeyOr(r.ReadHex("Hotkeys", "Toggle", kVkEnd), kVkEnd, "Toggle");
     c.yaw_mode_vk =
@@ -266,7 +264,6 @@ void Config::WriteDefault(const std::string& path) {
     w.WriteDouble("LimitZBack", kDefaultPosLimitZBack);
     w.WriteBlankLine();
     w.WriteSection("Hotkeys");
-    w.WriteHex("Recenter", hotkeys::kVkHome);
     w.WriteHex("Toggle", hotkeys::kVkEnd);
     w.WriteHex("YawMode", hotkeys::kVkPageDown);
     w.WriteComment(" Page Up: cycle 6DOF -> rotation-only -> position-only");
@@ -291,7 +288,19 @@ void Config::WriteDefault(const std::string& path) {
     w.WriteDouble("FovViewmodel", kDefaultFovOverride);
     w.WriteBlankLine();
     w.WriteSection("Debug");
+    w.WriteComment(" Writes Portal2HeadTracking.log next to portal2.exe, fresh every launch");
+    w.WriteComment(" (the previous session is kept as Portal2HeadTracking.prev.log). It");
+    w.WriteComment(" records the build profile, the tracker connection and the pose being");
+    w.WriteComment(" applied. That is the file to attach to a bug report - leave it on.");
     w.WriteBool("LogToFile", kDefaultLogToFile);
+}
+
+bool Config::FileLoggingRequested() {
+    const std::string path = IniPath();
+    if (!std::filesystem::exists(path)) return kDefaultLogToFile;
+    cameraunlock::IniReader r;
+    if (!r.Open(path)) return kDefaultLogToFile;
+    return r.ReadBool("Debug", "LogToFile", kDefaultLogToFile);
 }
 
 Config Config::LoadOrCreateDefault() {
@@ -313,7 +322,6 @@ Config Config::LoadOrCreateDefault() {
     LoadPosition(r, c);
     LoadHotkeys(r, c);
     LoadView(r, c);
-    c.log_to_file = r.ReadBool("Debug", "LogToFile", kDefaultLogToFile);
     return c;
 }
 

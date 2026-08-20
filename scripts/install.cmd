@@ -30,7 +30,7 @@ set "ASI_LOADER_NAME=winmm.dll"
 :: target into bin\. HeadTracking.ini and the log stay next to portal2.exe at
 :: the game root, because the mod resolves both from the exe directory.
 set "ASI_SUBDIR=bin"
-set "MOD_CONTROLS=Controls: Home=recenter, End=toggle tracking, PgUp=cycle tracking mode, PgDn=toggle yaw mode.&echo Chord alternatives: Ctrl+Shift+T=recenter, Ctrl+Shift+Y=toggle tracking, Ctrl+Shift+G=cycle tracking mode, Ctrl+Shift+H=toggle yaw mode."
+set "MOD_CONTROLS=Controls: End=toggle tracking, PgUp=cycle tracking mode, PgDn=toggle yaw mode.&echo Chord alternatives: Ctrl+Shift+Y=toggle tracking, Ctrl+Shift+G=cycle tracking mode, Ctrl+Shift+H=toggle yaw mode."
 :: ASI_LOADER_NAME is the filename the ASI DLL is renamed to. DL2 and most
 :: modern games use winmm.dll; older ones use dinput8.dll or xinput1_3.dll.
 :: vendor/ultimate-asi-loader/dinput8.dll is the bundled source; we copy it

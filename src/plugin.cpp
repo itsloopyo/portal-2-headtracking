@@ -23,7 +23,6 @@ Plugin::~Plugin() = default;
 
 void Plugin::Initialize() {
     m_config = Config::LoadOrCreateDefault();
-    SetFileLogging(m_config.log_to_file);
     m_enabled.store(m_config.enabled_on_startup);
     m_worldSpaceYaw.store(m_config.world_space_yaw);
 
@@ -47,8 +46,7 @@ void Plugin::Initialize() {
     }
 
     m_hotkeys = std::make_unique<HotkeyHandler>();
-    m_hotkeys->Start(*this, m_config.recenter_vk, m_config.toggle_vk, m_config.yaw_mode_vk,
-                     m_config.mode_cycle_vk);
+    m_hotkeys->Start(*this, m_config.toggle_vk, m_config.yaw_mode_vk, m_config.mode_cycle_vk);
     // Trackers disagree on whether they report in the user's frame (+X right,
     // +Z forward) or the camera's mirrored view of it. Logging the effective
     // inversion means a "leaning moves the wrong way" report arrives with the
@@ -64,10 +62,6 @@ void Plugin::ToggleEnabled() {
     const bool next = !m_enabled.load();
     m_enabled.store(next);
     for (int i = 0; i < m_activePlayers; ++i) m_feeds[i].SetEnabled(next);
-}
-
-void Plugin::Recenter() {
-    for (int i = 0; i < m_activePlayers; ++i) m_feeds[i].Recenter();
 }
 
 void Plugin::ToggleYawMode() {

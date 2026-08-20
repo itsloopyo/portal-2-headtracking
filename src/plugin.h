@@ -38,8 +38,6 @@ public:
     void CycleTrackingMode();
     const char* TrackingModeName() const;
 
-    void Recenter();
-
     // How many tracker feeds are live (1, or 2 with split-screen player 2).
     // The camera hook needs this to decide whether an offset viewport is a
     // second player's tile or just an unexpected rect.

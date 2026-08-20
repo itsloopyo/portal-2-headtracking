@@ -73,8 +73,9 @@ void TrackerFeed::Start(uint16_t port, const Config& config) {
 
 void TrackerFeed::LogConnectionChange() {
     const bool isRemote = m_session.IsRemoteConnection();
-    if (isRemote == m_isRemoteConnection) return;
+    if (m_remoteConnectionKnown && isRemote == m_isRemoteConnection) return;
     m_isRemoteConnection = isRemote;
+    m_remoteConnectionKnown = true;
 
     const double effective = cameraunlock::math::GetEffectiveSmoothing(
         m_localSmoothing, m_remoteSmoothing, isRemote);
@@ -91,8 +92,6 @@ void TrackerFeed::SetEnabled(bool enabled) {
     m_enabled.store(enabled);
     if (!enabled) Invalidate();
 }
-
-void TrackerFeed::Recenter() { m_session.Recenter(); }
 
 void TrackerFeed::CycleMode() { m_session.CycleMode(); }
 

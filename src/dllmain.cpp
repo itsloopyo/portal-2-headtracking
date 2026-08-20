@@ -1,13 +1,14 @@
 #include "pch.h"
 
 #include "plugin.h"
+#include "config.h"
 #include "debug_log.h"
 #include "version.h"
 
 namespace {
 
 DWORD WINAPI BootstrapThread(LPVOID) {
-    headtracking::OpenLogFile();
+    if (headtracking::Config::FileLoggingRequested()) headtracking::OpenLogFile();
     HT_LOG("[main] Portal2HeadTracking %s loaded into pid %lu",
            HEADTRACKING_VERSION_STRING, GetCurrentProcessId());
 

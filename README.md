@@ -112,8 +112,8 @@ Split-screen renders a viewport per player, and each gets its own tracker:
 
 Point the second player's tracker at port `4243` and both views track
 independently. Player 2 needs nothing else configured; the mod works out
-which viewport it is drawing from the split-screen tile. Recentering from a
-phone app affects only that player. Set `SplitScreenPlayer2=0` in
+which viewport it is drawing from the split-screen tile. Centring in a phone
+app affects only that player. Set `SplitScreenPlayer2=0` in
 `HeadTracking.ini` to stop the mod binding `4243` at all.
 
 The hotkeys are shared and apply to both players.
@@ -124,7 +124,6 @@ Two equivalent binding sets, use whichever your keyboard has:
 
 | Action              | Nav-cluster | Chord           |
 |---------------------|-------------|-----------------|
-| Recenter            | `Home`      | `Ctrl+Shift+T`  |
 | Toggle tracking     | `End`       | `Ctrl+Shift+Y`  |
 | Cycle tracking mode | `Page Up`   | `Ctrl+Shift+G`  |
 | Toggle yaw mode     | `Page Down` | `Ctrl+Shift+H`  |
@@ -203,8 +202,7 @@ LimitZ=0.4
 LimitZBack=0.1
 
 [Hotkeys]
-; Virtual-key codes: Home, End, Page Down, Page Up
-Recenter=0x24
+; Virtual-key codes: End, Page Down, Page Up
 Toggle=0x23
 YawMode=0x22
 ModeCycle=0x21
@@ -221,9 +219,9 @@ FovViewmodel=0
 
 [Debug]
 ; 1 logs the build profile, tracker connection and applied head pose to
-; Portal2HeadTracking.log next to portal2.exe. That is the file to attach
-; to a bug report.
-LogToFile=0
+; Portal2HeadTracking.log next to portal2.exe, fresh every launch. That is
+; the file to attach to a bug report - leave it on.
+LogToFile=1
 ```
 
 Smoothing is picked from the packet's source address, not from which machine
@@ -254,8 +252,10 @@ returns you to the game's own FOV, and turning it back on restores yours.
 
 ## Troubleshooting
 
-**Mod not loading.** Set `[Debug] LogToFile=1`, relaunch, and read
-`Portal2HeadTracking.log` next to `portal2.exe`.
+**Mod not loading.** Read `Portal2HeadTracking.log` next to `portal2.exe`. It
+is written fresh every launch, so it only ever holds the session you just
+played; the launch before it is kept as `Portal2HeadTracking.prev.log`, which
+is the one to send if the game crashed and you relaunched.
 
 - No log file at all means the ASI loader is not injecting. Check that
   `winmm.dll` and `Portal2HeadTracking.asi` are both in `Portal 2\bin\`, not
