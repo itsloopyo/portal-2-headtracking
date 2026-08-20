@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.0] - 2026-08-20
+
+### Added
+
+- remove the in-game recentre control, default logging on
+
+### Other
+
+- Hello world
+
 All notable changes to Portal2HeadTracking will be documented in this file.
 
 ## [Unreleased]
