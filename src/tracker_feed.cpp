@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 #include "tracker_feed.h"
 
 #include "angles.h"

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 #pragma once
 
 #ifndef WIN32_LEAN_AND_MEAN

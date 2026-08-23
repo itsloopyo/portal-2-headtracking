@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 // Tests for src/reticle_projection.h - where the clean aim direction lands on
 // screen once the head has moved the view away from it.
 //

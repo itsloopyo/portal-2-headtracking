@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 #pragma once
 
 #include "builds/build_profile.h"

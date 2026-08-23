@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 #include "builds/build_registry.h"
 
 #include "debug_log.h"

@@ -49,8 +49,9 @@ or as the first argument:
 
 ### Manual Installation
 
-The `-nexus` ZIP contains only `bin\Portal2HeadTracking.asi`. It assumes you
-already have an ASI loader, and Portal 2 needs it in a specific place:
+The `-nexus` ZIP holds the mod at `bin\Portal2HeadTracking.asi`, plus
+`LICENSE`, `THIRD-PARTY-NOTICES.md` and this README at its root. It assumes
+you already have an ASI loader, and Portal 2 needs it in a specific place:
 
 1. Extract the ZIP over your Portal 2 folder, so the `.asi` lands in
    `Portal 2\bin\`.
@@ -347,5 +348,7 @@ Third-party components bundled in or linked into the release are listed in
 ## Disclaimer
 
 This mod is not affiliated with, endorsed by, or supported by Valve
-Corporation. It contains no Valve code or assets, and requires a legitimately
-purchased copy of Portal 2. Use at your own risk.
+Corporation. Neither download contains any Valve code or assets, and the mod
+requires a legitimately purchased copy of Portal 2. The demo clip at the top of
+this page is recorded gameplay and remains Valve's - see
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). Use at your own risk.

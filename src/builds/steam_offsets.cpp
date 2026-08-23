@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 // Steam Win32 build profiles for Portal 2's client.dll. Append-only: a new
 // patch gets a new entry here and a new line at the top of kKnownProfiles in
 // build_registry.cpp. Nothing in this file is ever edited in place.

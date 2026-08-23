@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 // Tests for the config -> core PositionSettings mapping (src/position_mapping.h).
 //
 // Every assertion here covers a mapping whose failure is silent in game: the

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 // Render-view injection for Portal 2 (Source Engine, client.dll).
 //
 // Hook target: CViewRender::RenderView(CViewSetup* view, CViewSetup* hudView,

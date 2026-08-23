@@ -113,7 +113,7 @@ Copy-Item $asiPath $nexusBin
 # notices ship in it, not only in the installer ZIP. They sit at the ZIP root so
 # that extracting over the game folder does not scatter them into the engine's
 # own directory.
-foreach ($doc in @('LICENSE', 'THIRD-PARTY-NOTICES.md')) {
+foreach ($doc in @('LICENSE', 'THIRD-PARTY-NOTICES.md', 'README.md')) {
     $src = Join-Path $repoRoot $doc
     if (-not (Test-Path $src)) { throw "Missing required notice file: $src" }
     Copy-Item $src $nexusStage

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 // Characterization tests for the Source Engine camera maths the render-view
 // detour applies (src/source_math.cpp).
 //

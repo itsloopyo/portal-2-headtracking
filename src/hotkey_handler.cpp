@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 itsloopyo / CameraUnlock
 #include "hotkey_handler.h"
 
 #include "cameraunlock/input/chord_hotkeys.h"
