@@ -1,10 +1,8 @@
 # Portal 2 Head Tracking
 
-![Mod GIF](https://raw.githubusercontent.com/itsloopyo/portal-2-headtracking/main/assets/readme-clip.gif)
+![Portal 2 running with this mod](https://raw.githubusercontent.com/itsloopyo/portal-2-headtracking/main/assets/readme-clip.gif)
 
-Head tracking for Portal 2 that decouples where you look from where you aim:
-your head moves the camera, the mouse still points the portal gun, no VR
-headset is required.
+An unofficial head tracking mod for Portal 2 that moves the view with your head while your mouse or controller keeps aiming, driven by a webcam, phone, or any OpenTrack compatible tracker, with no VR headset required.
 
 ## Features
 
@@ -79,7 +77,7 @@ A headset you already own works as a high-quality tracker:
    cable, and start SteamVR.
 2. In OpenTrack, set Input to `SteamVR`.
 3. Set Output to `UDP over network`, `127.0.0.1:4242`.
-4. Wear the headset on your forehead, or hold it, and start tracking.
+4. Start tracking.
 
 ### Webcam Setup
 
