@@ -72,8 +72,7 @@ jobs:
           $zip = Get-ChildItem release/*-installer.zip | Select-Object -First 1
           node cameraunlock-core/scripts/validate-manifest.mjs $zip.FullName
 
-      # Unzip the installer so upload-artifact does not nest a zip in its zip.
-      - name: Stage installer contents for artifact upload
+      - name: Verify installer was produced
         shell: pwsh
         run: |
           $zip = Get-ChildItem release/*-installer.zip -ErrorAction SilentlyContinue | Select-Object -First 1
@@ -81,25 +80,3 @@ jobs:
             Write-Host "::error::No installer ZIP was produced by 'pixi run package'"
             exit 1
           }
-          $dest = "release/artifact-contents"
-          if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
-          New-Item -ItemType Directory -Path $dest -Force | Out-Null
-          Expand-Archive -Path $zip.FullName -DestinationPath $dest -Force
-          Write-Host "Staged $($zip.Name) -> $dest" -ForegroundColor Green
-
-      - name: Compute artifact name from ref
-        id: artifact
-        shell: pwsh
-        run: |
-          $branch = if ($env:GITHUB_HEAD_REF) { $env:GITHUB_HEAD_REF } else { $env:GITHUB_REF_NAME }
-          $sanitized = $branch -replace '[^A-Za-z0-9._-]', '-'
-          "name=Portal2HeadTracking-$sanitized" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-
-      - name: Upload installer artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: ${{ steps.artifact.outputs.name }}
-          path: release/artifact-contents/
-          retention-days: 14
-          if-no-files-found: error
-          overwrite: true
