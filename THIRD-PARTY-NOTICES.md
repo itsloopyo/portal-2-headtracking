@@ -15,7 +15,7 @@ clip, which stays out of both release ZIPs and is set out in full under
 |-----------|---------|---------|--------------|
 | Ultimate ASI Loader | v9.7.2 | MIT | Bundled verbatim in the installer ZIP |
 | MinHook | `c3fcafdc1014` | BSD-2-Clause | Compiled into `Portal2HeadTracking.asi` |
-| cameraunlock-core | fec3b4c8a6fe9c45401cf65d3d43d4f5acd22b72 | MIT | Compiled into `Portal2HeadTracking.asi` |
+| cameraunlock-core | f441e29427b7422a584ba492dddd7788881804b0 | MIT | Compiled into `Portal2HeadTracking.asi` |
 | OpenTrack | n/a | ISC | Not bundled; UDP protocol interoperability only |
 
 ---
@@ -162,7 +162,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Git submodule at `cameraunlock-core/`, compiled into `Portal2HeadTracking.asi`. Our own code,
 MIT licensed, reproduced here so the notices are complete.
 
-- Pinned commit: `fec3b4c8a6fe9c45401cf65d3d43d4f5acd22b72`
+- Pinned commit: `f441e29427b7422a584ba492dddd7788881804b0`
 
 ```
 MIT License
