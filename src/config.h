@@ -5,6 +5,9 @@
 #include <cstdint>
 #include <string>
 
+#include "cameraunlock/data/position_settings.h"
+#include "cameraunlock/math/smoothing_utils.h"
+
 #include "hotkeys.h"
 
 namespace headtracking {
@@ -21,15 +24,15 @@ constexpr bool     kDefaultEnableOnStartup    = true;
 constexpr float kDefaultSensitivity = 1.0f;
 constexpr float kDefaultDeadzone    = 0.0f;
 
-constexpr float kDefaultLocalSmoothing  = 0.0f;
-constexpr float kDefaultRemoteSmoothing = 0.15f;
+constexpr float kDefaultLocalSmoothing  = static_cast<float>(cameraunlock::math::kDefaultLocalSmoothing);
+constexpr float kDefaultRemoteSmoothing = static_cast<float>(cameraunlock::math::kDefaultRemoteSmoothing);
 
 constexpr bool  kDefaultPosEnabled     = true;
 constexpr float kDefaultPosSensitivity = 1.0f;
-constexpr float kDefaultPosLimitX      = 0.30f;
-constexpr float kDefaultPosLimitY      = 0.20f;
-constexpr float kDefaultPosLimitZ      = 0.40f;
-constexpr float kDefaultPosLimitZBack  = 0.10f;
+constexpr float kDefaultPosLimitX      = cameraunlock::PositionSettings{}.limit_x;
+constexpr float kDefaultPosLimitY      = cameraunlock::PositionSettings{}.limit_y;
+constexpr float kDefaultPosLimitZ      = cameraunlock::PositionSettings{}.limit_z;
+constexpr float kDefaultPosLimitZBack  = cameraunlock::PositionSettings{}.limit_z_back;
 constexpr float kDefaultPosWorldScale  = 39.37f;
 
 constexpr bool  kDefaultWorldSpaceYaw = true;
