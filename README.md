@@ -8,6 +8,7 @@ An unofficial head tracking mod for Portal 2 that moves the view with your head 
 
 - **Decoupled look and aim** - head tracking moves the camera; aim stays on your mouse or controller
 - **6DOF positional tracking** - lean and peek with head position
+- **Works with any OpenTrack compatible tracker** - free options available for PC, iOS and Android
 - **Split-screen co-op tracking** - each player gets their own tracker feeding their own viewport
 
 ## Requirements
@@ -21,6 +22,13 @@ An unofficial head tracking mod for Portal 2 that moves the view with your head 
   DLL; 64-bit Windows runs it fine.
 
 ## Installation
+
+### Lopari
+
+Download [Lopari](https://lopari.app), choose **Portal 2**, and click
+**Play with head tracking**.
+
+### Standalone Installer
 
 1. Download the latest `Portal2HeadTracking-v<version>-installer.zip` from the
    [Releases page](https://github.com/itsloopyo/portal-2-headtracking/releases).
