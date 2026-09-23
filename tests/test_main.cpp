@@ -5,11 +5,12 @@
 int RunSourceMathTests();
 int RunPositionMappingTests();
 int RunReticleProjectionTests();
+int RunViewmodelViewTests();
 
 int main() {
     std::printf("Portal2HeadTracking tests\n=========================\n");
     const int failures = RunSourceMathTests() + RunPositionMappingTests()
-                          + RunReticleProjectionTests();
+                          + RunReticleProjectionTests() + RunViewmodelViewTests();
     if (failures == 0) {
         std::printf("\nAll tests passed\n");
         return 0;

@@ -13,6 +13,7 @@ namespace headtracking {
 class CameraHook;
 class CrosshairHook;
 class HotkeyHandler;
+class ViewmodelHook;
 
 // Mod-level coordinator: owns the config, the per-player tracker feeds, the
 // render-view hook and the hotkeys, and is the single object the detour asks
@@ -65,6 +66,7 @@ private:
 
     std::unique_ptr<CameraHook>    m_cameraHook;
     std::unique_ptr<CrosshairHook> m_crosshairHook;
+    std::unique_ptr<ViewmodelHook> m_viewmodelHook;
     std::unique_ptr<HotkeyHandler> m_hotkeys;
 };
 

@@ -47,24 +47,35 @@ constexpr CrosshairOffsets kCrosshairLayout_20260626 = {
     0x0D9B60u,  // screen height
 };
 
+// DrawViewModels is RenderView's only caller of rva 0x1F2070, passed the view
+// and `whatToDraw & 1`; it copies the 0x104-byte CViewSetup, stores the
+// fovViewmodel at 0x6C over fov, and pushes the copy through vtable offset 0xA0
+// of the IVRenderView* held at rva 0x9AA238. A second push of the same copy at
+// the world fov follows for anything in the viewmodel group that is not a
+// C_BaseViewModel.
+constexpr ViewmodelOffsets kViewmodelLayout_20260626 = {
+    0x1F2070u,  // CViewRender::DrawViewModels
+    0x9AA238u,  // IVRenderView* render
+};
+
 extern const BuildProfile kSteamProfile_20260626 = {
     "steam-win32-20260626",
     { 0x6A3E9243u, 0x00FF3000u, 0x00000000u },
-    { 0x1F2620u, kViewSetupLayout_2025, kCrosshairLayout_20260626 },
+    { 0x1F2620u, kViewSetupLayout_2025, kCrosshairLayout_20260626, kViewmodelLayout_20260626 },
 };
 
 // client.dll dated 2025-01-17. Offsets confirmed against the CViewSetup the
 // running RenderView consumes.
 //
-// The crosshair addresses are left unset rather than copied from the
-// 2026-06-26 profile: that build is not on hand to verify them against, and a
-// wrong Paint RVA would detour an arbitrary function. Head tracking works as it
-// always has here; only reticle compensation is unavailable, and it says so in
-// the log.
+// The crosshair and viewmodel addresses are left unset rather than copied from
+// the 2026-06-26 profile: that build is not on hand to verify them against, and
+// a wrong RVA would detour an arbitrary function. Head tracking works as it
+// always has here; only reticle and portal gun compensation are unavailable,
+// and the log says so.
 extern const BuildProfile kSteamProfile_20250117 = {
     "steam-win32-20250117",
     { 0x678AE7C7u, 0x00FF3000u, 0x00AA88E7u },
-    { 0x1F2620u, kViewSetupLayout_2025, {} },
+    { 0x1F2620u, kViewSetupLayout_2025, {}, {} },
 };
 
 }  // namespace headtracking::builds

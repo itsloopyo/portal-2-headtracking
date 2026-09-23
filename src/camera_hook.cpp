@@ -251,7 +251,10 @@ void ApplyTracking(const ViewSetup& view) {
     float* ang = view.Angles();
 
     AimState aim;
-    for (int i = 0; i < 3; ++i) aim.clean[i] = ang[i];
+    for (int i = 0; i < 3; ++i) {
+        aim.clean[i] = ang[i];
+        aim.cleanOrigin[i] = view.Origin()[i];
+    }
 
     TrackingDelta delta;
     float yaw_r, pitch_r, roll_r;

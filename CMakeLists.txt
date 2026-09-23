@@ -47,6 +47,7 @@ add_library(Portal2HeadTracking SHARED
     src/camera_hook.cpp
     src/aim_state.cpp
     src/crosshair_hook.cpp
+    src/viewmodel_hook.cpp
     src/source_math.cpp
     src/builds/build_registry.cpp
     src/builds/steam_offsets.cpp

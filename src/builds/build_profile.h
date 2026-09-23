@@ -49,11 +49,22 @@ struct CrosshairOffsets {
     uint32_t screen_height_rva;         // engine screen height
 };
 
+// The portal gun is drawn in its own pass, CViewRender::DrawViewModels, which
+// copies the render view, swaps in fovViewmodel and pushes the copy through the
+// engine's IVRenderView::Push3DView. Giving that pass a view of its own needs
+// both: DrawViewModels to know the pass is running, and Push3DView to reach the
+// copy, which only exists inside it.
+struct ViewmodelOffsets {
+    uint32_t draw_view_models_rva;   // CViewRender::DrawViewModels
+    uint32_t render_view_iface_rva;  // client.dll's IVRenderView* global
+};
+
 // The whole surface one client.dll build pins.
 struct OffsetTable {
     uint32_t render_view_rva;  // CViewRender::RenderView, RVA in client.dll
     ViewSetupOffsets view_setup;
     CrosshairOffsets crosshair;
+    ViewmodelOffsets viewmodel;
 };
 
 // One entry per shipped Portal 2 client.dll build we have offsets for. The PE
@@ -77,6 +88,13 @@ struct BuildProfile {
                offsets.crosshair.hud_crosshair_paint_rva != 0 &&
                offsets.crosshair.screen_width_rva != 0 &&
                offsets.crosshair.screen_height_rva != 0;
+    }
+
+    // Also optional. Without it the portal gun is drawn from the head-tracked
+    // view at its own narrower FOV, which swings it off the reticle.
+    bool HasViewmodelOffsets() const {
+        return offsets.viewmodel.draw_view_models_rva != 0 &&
+               offsets.viewmodel.render_view_iface_rva != 0;
     }
 };
 

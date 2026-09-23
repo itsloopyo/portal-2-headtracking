@@ -6,6 +6,7 @@
 #include "crosshair_hook.h"
 #include "debug_log.h"
 #include "hotkey_handler.h"
+#include "viewmodel_hook.h"
 
 namespace headtracking {
 
@@ -45,6 +46,8 @@ void Plugin::Initialize() {
         // worth installing if the view is actually being modified.
         m_crosshairHook = std::make_unique<CrosshairHook>();
         m_crosshairHook->Install();
+        m_viewmodelHook = std::make_unique<ViewmodelHook>();
+        m_viewmodelHook->Install();
     }
 
     m_hotkeys = std::make_unique<HotkeyHandler>();

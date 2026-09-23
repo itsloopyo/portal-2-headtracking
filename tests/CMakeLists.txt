@@ -6,6 +6,7 @@ add_executable(portal2_headtracking_tests
     source_math_tests.cpp
     position_mapping_tests.cpp
     reticle_projection_tests.cpp
+    viewmodel_view_tests.cpp
     ${CMAKE_SOURCE_DIR}/src/source_math.cpp
 )
 
